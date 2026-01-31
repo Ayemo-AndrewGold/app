@@ -43,7 +43,7 @@ const Footer = () => {
 
         <div className="border-t border-neutral-800 pt-8 text-center">
           <p className="text-sm text-neutral-400">
-            © 2024 PathFinder AI. All rights reserved. Built with ❤️ for Nigerian students.
+            © 2026 PathFinder AI. All rights reserved. Built with ❤️ for Nigerian students.
           </p>
         </div>
       </div>
