@@ -1,5 +1,6 @@
 'use client';
 
+import AIChatWidget from '@/components/AIChatWidget';
 import CTASection from '@/components/CTASection';
 import FeaturesSection from '@/components/FeaturesSection';
 import Footer from '@/components/Footer';
@@ -36,6 +37,8 @@ const LandingPage = () => {
 
       {/* Footer */}
       <Footer />
+      
+      <AIChatWidget />
 
 
       
