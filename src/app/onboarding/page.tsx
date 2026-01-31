@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 import { 
   ArrowLeft, 
   ArrowRight, 
@@ -46,6 +47,7 @@ const STEPS = [
 ];
 
 export default function OnboardingQuestionnaire() {
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     // Step 1: Basic Info
@@ -85,15 +87,33 @@ export default function OnboardingQuestionnaire() {
     }
   };
 
-  const handleSubmit = async () => {
-    console.log('Submitting to AI:', formData);
-    // TODO: Send to backend API
-    // const response = await fetch('/api/onboarding', {
-    //   method: 'POST',
-    //   body: JSON.stringify(formData),
-    // });
-    // Redirect to results page
-    window.location.href = '/results';
+//   const handleSubmit = async () => {
+
+//   try {
+//     // Send to your backend
+//     const response = await fetch('/api/onboarding', {
+//       method: 'POST',
+//       headers: { 'Content-Type': 'application/json' },
+//       body: JSON.stringify(formData),
+//     });
+
+//     const data = await response.json();
+    
+//     // Navigate to loading
+//     router.push('/loading');
+//   } catch (error) {
+//     console.error('Error:', error);
+//     // For now, still navigate (fallback)
+//     router.push('/loading');
+//   }
+// };
+  
+const handleSubmit = () => {
+    // For demo: Save to localStorage
+    localStorage.setItem('pathfinderOnboardingData', JSON.stringify(formData));
+    
+    // Navigate to loading screen
+    router.push('/loading');
   };
 
   const updateField = (field: string, value: any) => {
@@ -101,7 +121,7 @@ export default function OnboardingQuestionnaire() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-neutral-50 to-white py-12">
+    <div className="min-h-screen bg-linear-to-b from-neutral-50 to-white py-12">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
@@ -129,7 +149,7 @@ export default function OnboardingQuestionnaire() {
           </div>
           <div className="h-2 bg-neutral-200 rounded-full overflow-hidden">
             <motion.div
-              className="h-full bg-gradient-to-r from-emerald-500 to-emerald-600"
+              className="h-full bg-linear-to-r from-emerald-500 to-emerald-600"
               initial={{ width: 0 }}
               animate={{ width: `${progress}%` }}
               transition={{ duration: 0.5, ease: 'easeOut' }}
@@ -368,7 +388,7 @@ function Step2({ formData, updateField }: StepProps) {
   const toggleInterest = (interest: string) => {
     const current = formData.interests || [];
     if (current.includes(interest)) {
-      updateField('interests', current.filter(i => i !== interest));
+      updateField('interests', current.filter((i: string) => i !== interest));
     } else {
       updateField('interests', [...current, interest]);
     }
@@ -400,7 +420,7 @@ function Step2({ formData, updateField }: StepProps) {
                 }`}
               >
                 <div className="flex items-start gap-3">
-                  <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 mt-0.5 ${
+                  <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 mt-0.5 ${
                     isSelected ? 'border-emerald-500 bg-emerald-500' : 'border-neutral-300'
                   }`}>
                     {isSelected && <CheckCircle2 className="w-4 h-4 text-white" />}
@@ -470,7 +490,7 @@ function Step3({ formData, updateField }: StepProps) {
   const toggleIndustry = (industry: string) => {
     const current = formData.industryPreferences || [];
     if (current.includes(industry)) {
-      updateField('industryPreferences', current.filter(i => i !== industry));
+      updateField('industryPreferences', current.filter((i: string) => i !== industry));
     } else {
       updateField('industryPreferences', [...current, industry]);
     }
