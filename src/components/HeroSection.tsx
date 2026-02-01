@@ -66,7 +66,7 @@ return (
               <div className="flex flex-col sm:flex-row gap-4 mb-8">
                 <Link href="/onboarding">
                   <button className="group px-8 py-4 bg-emerald-600 text-white rounded-xl font-semibold text-lg hover:bg-emerald-700 transform hover:scale-105 transition-all duration-200 shadow-xl shadow-emerald-500/30 flex items-center justify-center gap-2">
-                    Start Your Journey
+                    Take Career Assessment
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </button>
                 </Link>

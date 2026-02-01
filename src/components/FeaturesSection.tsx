@@ -75,7 +75,7 @@ function FeatureCard({ feature, index }: any) {
             Everything You Need to Succeed
           </h2>
           <p className="text-xl text-neutral-600 max-w-3xl mx-auto">
-            Comprehensive tools and insights to guide your career journey from confusion to clarity
+            Find careers based on your strengths, interests, and goals
           </p>
         </motion.div>
 
