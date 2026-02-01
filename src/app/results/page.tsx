@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { 
   TrendingUp,
@@ -237,6 +238,7 @@ const CAREER_RECOMMENDATIONS = [
 ];
 
 export default function ResultsPage() {
+  const router = useRouter();
   const [selectedCareer, setSelectedCareer] = useState(CAREER_RECOMMENDATIONS[0]);
   const [userProfile, setUserProfile] = useState<any>(null);
   const [expandedPhase, setExpandedPhase] = useState<number | null>(0);
@@ -482,6 +484,9 @@ export default function ResultsPage() {
           <button className="px-8 py-4 bg-white text-emerald-600 rounded-xl font-bold hover:bg-emerald-50 transition-colors inline-flex items-center gap-2 text-lg">
             Start Learning Path
             <ArrowRight className="w-5 h-5" />
+          </button>
+          <button onClick={() => router.push('/dashboard')} className="mt-4 px-8 py-4 bg-emerald-800 text-white rounded-xl font-bold hover:bg-emerald-900 transition-colors inline-flex items-center gap-2 text-lg">
+            View Progress Dashboard
           </button>
         </motion.div>
       </div>
@@ -779,7 +784,7 @@ function CircularProgress({ value, size = 120 }: { value: number; size?: number 
 }
 
 // Skill Gap Bar - ENHANCED WITH PRIORITY
-function SkillGapBar({ skill }: any) {
+function SkillGapBar({ skill }: { skill: { name: string; current: number; required: number; priority: 'high' | 'medium' | 'low'; category: string } }) {
   const gap = skill.required - skill.current;
   const priorityColors = {
     high: 'bg-red-100 text-red-700 border-red-300',
