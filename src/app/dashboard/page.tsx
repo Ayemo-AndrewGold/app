@@ -21,13 +21,14 @@ import {
   Sparkles,
   MessageCircle,
   BarChart3,
-  Activity
+  Activity,
+  Mic
 } from 'lucide-react';
 
 // Mock user progress data
 const USER_PROGRESS = {
   userId: '12345',
-  name: 'Andrew Gold',
+  name: 'Chioma',
   startedAt: '2024-01-15',
   selectedCareer: 'Full-Stack Developer',
   currentPhase: 'Frontend Development',
@@ -692,10 +693,23 @@ function CheckInsTab({ progress }: any) {
           className="w-full px-4 py-3 border-2 border-purple-200 rounded-xl focus:border-purple-500 focus:outline-none resize-none mb-4"
         />
         
-        <button className="px-6 py-3 bg-purple-600 text-white rounded-xl font-semibold hover:bg-purple-700 transition-colors flex items-center gap-2">
-          <Brain className="w-5 h-5" />
-          Submit Reflection
-        </button>
+        <div className="flex gap-3">
+          <button className="flex-1 px-6 py-3 bg-purple-600 text-white rounded-xl font-semibold hover:bg-purple-700 transition-colors flex items-center justify-center gap-2">
+            <Brain className="w-5 h-5" />
+            Submit Text Reflection
+          </button>
+          <button 
+            onClick={() => window.location.href = '/voice'}
+            className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl font-semibold hover:from-purple-700 hover:to-blue-700 transition-colors flex items-center justify-center gap-2"
+          >
+            <Mic className="w-5 h-5" />
+            Record Voice Reflection
+          </button>
+        </div>
+        
+        <p className="text-xs text-center text-neutral-600 mt-3">
+          💡 Prefer to speak? Try our voice reflection feature for a more natural experience
+        </p>
       </div>
     </motion.div>
   );

@@ -11,7 +11,8 @@ import {
   Heart,
   Target,
   Zap,
-  Sparkles
+  Sparkles,
+  AlertCircle
 } from 'lucide-react';
 
 // Step data configuration
@@ -49,6 +50,7 @@ const STEPS = [
 export default function OnboardingQuestionnaire() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
+  const [errors, setErrors] = useState<string[]>([]);
   const [formData, setFormData] = useState({
     // Step 1: Basic Info
     institution: '',
@@ -73,7 +75,74 @@ export default function OnboardingQuestionnaire() {
 
   const progress = (currentStep / STEPS.length) * 100;
 
+  // Validation function for each step
+  const validateStep = (step: number): boolean => {
+    const newErrors: string[] = [];
+
+    if (step === 1) {
+      if (!formData.institution) newErrors.push('Please select your institution');
+      if (!formData.courseOfStudy) newErrors.push('Please enter your course of study');
+      if (!formData.currentLevel) newErrors.push('Please select your current level');
+      if (!formData.age) newErrors.push('Please enter your age');
+      else if (parseInt(formData.age) < 16 || parseInt(formData.age) > 50) {
+        newErrors.push('Age must be between 16 and 50');
+      }
+    }
+
+    if (step === 2) {
+      if (formData.interests.length < 2) {
+        newErrors.push('Please select at least 2 interests');
+      }
+      if (formData.interests.length > 4) {
+        newErrors.push('Please select maximum 4 interests');
+      }
+      if (!formData.strengths || formData.strengths.trim().length < 5) {
+        newErrors.push('Please describe your strengths (at least 5 characters)');
+      }
+    }
+
+    if (step === 3) {
+      if (!formData.careerGoals || formData.careerGoals.trim().length < 20) {
+        newErrors.push('Please describe your career goals (at least 20 characters)');
+      }
+      if (!formData.workStyle) {
+        newErrors.push('Please select your preferred work style');
+      }
+      if (formData.industryPreferences.length < 1) {
+        newErrors.push('Please select at least 1 industry preference');
+      }
+      if (formData.industryPreferences.length > 3) {
+        newErrors.push('Please select maximum 3 industries');
+      }
+    }
+
+    if (step === 4) {
+      const technicalSkillsCount = Object.keys(formData.technicalSkills).length;
+      const softSkillsCount = Object.keys(formData.softSkills).length;
+      
+      if (technicalSkillsCount < 3) {
+        newErrors.push('Please rate at least 3 technical skills');
+      }
+      if (softSkillsCount < 3) {
+        newErrors.push('Please rate at least 3 soft skills');
+      }
+    }
+
+    setErrors(newErrors);
+    return newErrors.length === 0;
+  };
+
   const handleNext = () => {
+    // Validate current step before proceeding
+    if (!validateStep(currentStep)) {
+      // Scroll to top to show errors
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    // Clear errors
+    setErrors([]);
+
     if (currentStep < STEPS.length) {
       setCurrentStep(currentStep + 1);
     } else {
@@ -83,34 +152,23 @@ export default function OnboardingQuestionnaire() {
 
   const handleBack = () => {
     if (currentStep > 1) {
+      setErrors([]); // Clear errors when going back
       setCurrentStep(currentStep - 1);
     }
   };
 
-//   const handleSubmit = async () => {
+  const handleSubmit = () => {
+    // Final validation
+    if (!validateStep(currentStep)) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
 
-//   try {
-//     // Send to your backend
-//     const response = await fetch('/api/onboarding', {
-//       method: 'POST',
-//       headers: { 'Content-Type': 'application/json' },
-//       body: JSON.stringify(formData),
-//     });
-
-//     const data = await response.json();
-    
-//     // Navigate to loading
-//     router.push('/loading');
-//   } catch (error) {
-//     console.error('Error:', error);
-//     // For now, still navigate (fallback)
-//     router.push('/loading');
-//   }
-// };
-  
-const handleSubmit = () => {
-    // For demo: Save to localStorage
+    // Save to localStorage
     localStorage.setItem('pathfinderOnboardingData', JSON.stringify(formData));
+    
+    // Log for debugging
+    console.log('Saved user data:', formData);
     
     // Navigate to loading screen
     router.push('/loading');
@@ -118,10 +176,14 @@ const handleSubmit = () => {
 
   const updateField = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+    // Clear errors when user starts typing
+    if (errors.length > 0) {
+      setErrors([]);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-neutral-50 to-white py-12">
+    <div className="min-h-screen bg-gradient-to-b from-neutral-50 to-white py-12">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
@@ -137,6 +199,35 @@ const handleSubmit = () => {
           </p>
         </motion.div>
 
+        {/* Error Messages */}
+        <AnimatePresence>
+          {errors.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="mb-6 bg-red-50 border-2 border-red-200 rounded-xl p-4"
+            >
+              <div className="flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
+                <div className="flex-1">
+                  <h3 className="font-semibold text-red-900 mb-2">
+                    Please complete the following:
+                  </h3>
+                  <ul className="space-y-1">
+                    {errors.map((error, index) => (
+                      <li key={index} className="text-sm text-red-700 flex items-start gap-2">
+                        <span className="text-red-500">•</span>
+                        <span>{error}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Progress Bar */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-2">
@@ -149,7 +240,7 @@ const handleSubmit = () => {
           </div>
           <div className="h-2 bg-neutral-200 rounded-full overflow-hidden">
             <motion.div
-              className="h-full bg-linear-to-r from-emerald-500 to-emerald-600"
+              className="h-full bg-gradient-to-r from-emerald-500 to-emerald-600"
               initial={{ width: 0 }}
               animate={{ width: `${progress}%` }}
               transition={{ duration: 0.5, ease: 'easeOut' }}
@@ -390,7 +481,10 @@ function Step2({ formData, updateField }: StepProps) {
     if (current.includes(interest)) {
       updateField('interests', current.filter((i: string) => i !== interest));
     } else {
-      updateField('interests', [...current, interest]);
+      // Limit to 4 interests
+      if (current.length < 4) {
+        updateField('interests', [...current, interest]);
+      }
     }
   };
 
@@ -403,24 +497,32 @@ function Step2({ formData, updateField }: StepProps) {
     >
       <div>
         <label className="block text-sm font-medium text-neutral-700 mb-3">
-          What are your interests? <span className="text-neutral-500">(Select 2-4)</span>
+          What are your interests? <span className="text-red-500">*</span> <span className="text-neutral-500">(Select 2-4)</span>
         </label>
+        <p className="text-sm text-neutral-600 mb-3">
+          Selected: {formData.interests?.length || 0} / 4
+        </p>
         <div className="grid grid-cols-2 gap-3">
           {interestOptions.map((interest) => {
             const isSelected = formData.interests?.includes(interest);
+            const canSelect = (formData.interests?.length || 0) < 4 || isSelected;
+            
             return (
               <button
                 key={interest}
                 type="button"
                 onClick={() => toggleInterest(interest)}
+                disabled={!canSelect}
                 className={`p-4 rounded-xl border-2 text-left transition-all duration-200 ${
                   isSelected
                     ? 'border-emerald-500 bg-emerald-50 shadow-md'
-                    : 'border-neutral-200 hover:border-emerald-300 hover:bg-neutral-50'
+                    : canSelect
+                    ? 'border-neutral-200 hover:border-emerald-300 hover:bg-neutral-50'
+                    : 'border-neutral-200 bg-neutral-50 opacity-50 cursor-not-allowed'
                 }`}
               >
                 <div className="flex items-start gap-3">
-                  <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 mt-0.5 ${
+                  <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 mt-0.5 ${
                     isSelected ? 'border-emerald-500 bg-emerald-500' : 'border-neutral-300'
                   }`}>
                     {isSelected && <CheckCircle2 className="w-4 h-4 text-white" />}
@@ -439,7 +541,7 @@ function Step2({ formData, updateField }: StepProps) {
 
       <div>
         <label className="block text-sm font-medium text-neutral-700 mb-2">
-          What are your top strengths?
+          What are your top strengths? <span className="text-red-500">*</span>
         </label>
         <textarea
           value={formData.strengths}
@@ -447,13 +549,14 @@ function Step2({ formData, updateField }: StepProps) {
           placeholder="e.g., Problem-solving, Communication, Leadership, Creativity..."
           rows={3}
           className="w-full px-4 py-3 border-2 border-neutral-200 rounded-xl focus:border-emerald-500 focus:outline-none resize-none transition-colors"
+          required
         />
-        <p className="text-xs text-neutral-500 mt-1">Separate with commas</p>
+        <p className="text-xs text-neutral-500 mt-1">Separate with commas • {formData.strengths?.length || 0} characters</p>
       </div>
 
       <div>
         <label className="block text-sm font-medium text-neutral-700 mb-2">
-          Areas you'd like to improve
+          Areas you'd like to improve <span className="text-neutral-500">(Optional)</span>
         </label>
         <textarea
           value={formData.weaknesses}
@@ -492,7 +595,10 @@ function Step3({ formData, updateField }: StepProps) {
     if (current.includes(industry)) {
       updateField('industryPreferences', current.filter((i: string) => i !== industry));
     } else {
-      updateField('industryPreferences', [...current, industry]);
+      // Limit to 3 industries
+      if (current.length < 3) {
+        updateField('industryPreferences', [...current, industry]);
+      }
     }
   };
 
@@ -515,11 +621,14 @@ function Step3({ formData, updateField }: StepProps) {
           className="w-full px-4 py-3 border-2 border-neutral-200 rounded-xl focus:border-emerald-500 focus:outline-none resize-none transition-colors"
           required
         />
+        <p className="text-xs text-neutral-500 mt-1">
+          {formData.careerGoals?.length || 0} characters (minimum 20)
+        </p>
       </div>
 
       <div>
         <label className="block text-sm font-medium text-neutral-700 mb-3">
-          Preferred work style
+          Preferred work style <span className="text-red-500">*</span>
         </label>
         <div className="grid grid-cols-2 gap-3">
           {workStyles.map((style) => (
@@ -543,20 +652,28 @@ function Step3({ formData, updateField }: StepProps) {
 
       <div>
         <label className="block text-sm font-medium text-neutral-700 mb-3">
-          Preferred industries <span className="text-neutral-500">(Select 1-3)</span>
+          Preferred industries <span className="text-red-500">*</span> <span className="text-neutral-500">(Select 1-3)</span>
         </label>
+        <p className="text-sm text-neutral-600 mb-3">
+          Selected: {formData.industryPreferences?.length || 0} / 3
+        </p>
         <div className="grid grid-cols-2 gap-3">
           {industries.map((industry) => {
             const isSelected = formData.industryPreferences?.includes(industry);
+            const canSelect = (formData.industryPreferences?.length || 0) < 3 || isSelected;
+            
             return (
               <button
                 key={industry}
                 type="button"
                 onClick={() => toggleIndustry(industry)}
+                disabled={!canSelect}
                 className={`p-3 rounded-xl border-2 text-sm font-medium transition-all duration-200 ${
                   isSelected
                     ? 'border-emerald-500 bg-emerald-50'
-                    : 'border-neutral-200 hover:border-emerald-300 hover:bg-neutral-50'
+                    : canSelect
+                    ? 'border-neutral-200 hover:border-emerald-300 hover:bg-neutral-50'
+                    : 'border-neutral-200 bg-neutral-50 opacity-50 cursor-not-allowed'
                 }`}
               >
                 {industry}
@@ -592,6 +709,9 @@ function Step4({ formData, updateField }: StepProps) {
     updateField(type, { ...current, [skill]: level });
   };
 
+  const technicalRated = Object.keys(formData.technicalSkills || {}).length;
+  const softRated = Object.keys(formData.softSkills || {}).length;
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -600,11 +720,11 @@ function Step4({ formData, updateField }: StepProps) {
       className="space-y-8"
     >
       <div>
-        <h3 className="text-lg font-semibold text-neutral-900 mb-4">
-          Technical Skills
+        <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+          Technical Skills <span className="text-red-500">*</span>
         </h3>
         <p className="text-sm text-neutral-600 mb-4">
-          Rate your proficiency (1 = Beginner, 5 = Expert)
+          Rate your proficiency (1 = Beginner, 5 = Expert) • Rated: {technicalRated} / 5 (minimum 3)
         </p>
         <div className="space-y-4">
           {technicalSkills.map((skill) => (
@@ -619,9 +739,12 @@ function Step4({ formData, updateField }: StepProps) {
       </div>
 
       <div>
-        <h3 className="text-lg font-semibold text-neutral-900 mb-4">
-          Soft Skills
+        <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+          Soft Skills <span className="text-red-500">*</span>
         </h3>
+        <p className="text-sm text-neutral-600 mb-4">
+          Rated: {softRated} / 5 (minimum 3)
+        </p>
         <div className="space-y-4">
           {softSkills.map((skill) => (
             <SkillRating

@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 import { 
   TrendingUp,
   Briefcase,
@@ -26,7 +26,9 @@ import {
   User,
   GraduationCap,
   Heart,
-  TrendingDown
+  TrendingDown,
+  Activity,
+  BarChart3
 } from 'lucide-react';
 
 // Mock data - replace with actual API data
@@ -249,7 +251,16 @@ export default function ResultsPage() {
     if (stored) {
       setUserProfile(JSON.parse(stored));
     }
-  }, []);
+
+    // Save selected career to localStorage for dashboard
+    localStorage.setItem('selectedCareer', JSON.stringify(selectedCareer));
+  }, [selectedCareer]);
+
+  const handleStartJourney = () => {
+    // Save career choice and navigate to dashboard
+    localStorage.setItem('selectedCareer', JSON.stringify(selectedCareer));
+    router.push('/dashboard');
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-neutral-50 to-white">
@@ -322,7 +333,7 @@ export default function ResultsPage() {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Profile Summary Card - NEW! */}
+        {/* Profile Summary Card */}
         {userProfile && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -455,7 +466,7 @@ export default function ResultsPage() {
           />
         </motion.div>
 
-        {/* AI Disclaimer - NEW! */}
+        {/* AI Disclaimer */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -469,32 +480,75 @@ export default function ResultsPage() {
           </p>
         </motion.div>
 
-        {/* Next Steps CTA */}
+        {/* START YOUR JOURNEY CTA - Updated! */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mt-12 bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-2xl p-8 text-white text-center"
+          className="mt-12 bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-2xl p-8 text-white text-center relative overflow-hidden"
         >
-          <h2 className="text-3xl font-bold mb-4">Ready to Start Your Journey?</h2>
-          <p className="text-emerald-100 mb-6 max-w-2xl mx-auto">
-            Choose a career path and get access to your personalized learning roadmap, 
-            curated resources, and real job opportunities.
-          </p>
-          <button className="px-8 py-4 bg-white text-emerald-600 rounded-xl font-bold hover:bg-emerald-50 transition-colors inline-flex items-center gap-2 text-lg">
-            Start Learning Path
-            <ArrowRight className="w-5 h-5" />
-          </button>
-          <button onClick={() => router.push('/dashboard')} className="mt-4 px-8 py-4 bg-emerald-800 text-white rounded-xl font-bold hover:bg-emerald-900 transition-colors inline-flex items-center gap-2 text-lg">
-            View Progress Dashboard
-          </button>
+          {/* Background decoration */}
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff12_1px,transparent_1px),linear-gradient(to_bottom,#ffffff12_1px,transparent_1px)] bg-[size:24px_24px]" />
+          
+          <div className="relative z-10">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-semibold mb-4">
+              <Activity className="w-4 h-4" />
+              Ready to Begin?
+            </div>
+            
+            <h2 className="text-3xl font-bold mb-4">Start Your Learning Journey!</h2>
+            <p className="text-emerald-100 mb-6 max-w-2xl mx-auto">
+              You've seen your perfect matches. Now let's track your progress, 
+              build your skills, and reach your goals together.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <button 
+                onClick={handleStartJourney}
+                className="px-8 py-4 bg-white text-emerald-600 rounded-xl font-bold hover:bg-emerald-50 transition-colors inline-flex items-center gap-2 text-lg shadow-xl"
+              >
+                <BarChart3 className="w-5 h-5" />
+                Go to My Dashboard
+                <ArrowRight className="w-5 h-5" />
+              </button>
+              
+              <p className="text-emerald-100 text-sm">
+                Track progress • Get AI guidance • Achieve your goals
+              </p>
+            </div>
+
+            {/* What's Next Preview */}
+            <div className="mt-8 grid md:grid-cols-3 gap-4 text-left">
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                <BarChart3 className="w-8 h-8 mb-2" />
+                <h3 className="font-semibold mb-1">Track Progress</h3>
+                <p className="text-sm text-emerald-100">
+                  See your journey from 0% to job-ready
+                </p>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                <Brain className="w-8 h-8 mb-2" />
+                <h3 className="font-semibold mb-1">AI Check-ins</h3>
+                <p className="text-sm text-emerald-100">
+                  Weekly guidance and roadmap updates
+                </p>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                <Award className="w-8 h-8 mb-2" />
+                <h3 className="font-semibold mb-1">Achievements</h3>
+                <p className="text-sm text-emerald-100">
+                  Earn badges as you complete milestones
+                </p>
+              </div>
+            </div>
+          </div>
         </motion.div>
       </div>
     </div>
   );
 }
 
-// Career Card Component - ENHANCED
+// Career Card Component - Same as before
 function CareerCard({ career, index, isSelected, onClick }: any) {
   const matchInfo = getMatchScoreInfo(career.matchScore);
 
@@ -536,7 +590,7 @@ function CareerCard({ career, index, isSelected, onClick }: any) {
               {career.description}
             </p>
 
-            {/* AI Reasoning - NEW! */}
+            {/* AI Reasoning */}
             <div className="mb-4 p-4 bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl border border-blue-200">
               <h4 className="text-sm font-semibold text-neutral-900 mb-2 flex items-center gap-2">
                 <Brain className="w-4 h-4 text-blue-600" />
@@ -617,7 +671,7 @@ function CareerCard({ career, index, isSelected, onClick }: any) {
   );
 }
 
-// Detailed Career View - ENHANCED WITH COLLAPSIBLE SECTIONS
+// Detailed Career View - Same as enhanced version
 function DetailedCareerView({ career, expandedPhase, setExpandedPhase }: any) {
   const totalPhases = career.roadmap.phases.length;
   const completedPhases = career.roadmap.phases.filter((p: any) => p.completed).length;
@@ -652,7 +706,7 @@ function DetailedCareerView({ career, expandedPhase, setExpandedPhase }: any) {
         </p>
       </div>
 
-      {/* Learning Roadmap - COLLAPSIBLE */}
+      {/* Learning Roadmap */}
       <div className="mb-8">
         <h3 className="text-lg font-semibold text-neutral-900 mb-4 flex items-center gap-2">
           <BookOpen className="w-5 h-5 text-blue-600" />
@@ -665,7 +719,6 @@ function DetailedCareerView({ career, expandedPhase, setExpandedPhase }: any) {
             
             return (
               <div key={index} className="border-2 border-neutral-200 rounded-xl overflow-hidden">
-                {/* Phase Header */}
                 <button
                   onClick={() => setExpandedPhase(isExpanded ? null : index)}
                   className="w-full p-4 flex items-center justify-between hover:bg-neutral-50 transition-colors"
@@ -690,7 +743,6 @@ function DetailedCareerView({ career, expandedPhase, setExpandedPhase }: any) {
                   }`} />
                 </button>
 
-                {/* Phase Content - Collapsible */}
                 {isExpanded && (
                   <motion.div
                     initial={{ height: 0, opacity: 0 }}
@@ -711,12 +763,6 @@ function DetailedCareerView({ career, expandedPhase, setExpandedPhase }: any) {
                         </span>
                       ))}
                     </div>
-                    
-                    {!phase.completed && (
-                      <button className="mt-4 px-4 py-2 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition-colors text-sm">
-                        Start This Phase
-                      </button>
-                    )}
                   </motion.div>
                 )}
               </div>
@@ -725,7 +771,7 @@ function DetailedCareerView({ career, expandedPhase, setExpandedPhase }: any) {
         </div>
       </div>
 
-      {/* Skills Gap - ENHANCED */}
+      {/* Skills Gap */}
       <div>
         <h3 className="text-lg font-semibold text-neutral-900 mb-2 flex items-center gap-2">
           <Zap className="w-5 h-5 text-orange-600" />
@@ -745,7 +791,7 @@ function DetailedCareerView({ career, expandedPhase, setExpandedPhase }: any) {
   );
 }
 
-// Circular Progress Component
+// Helper components (same as before)
 function CircularProgress({ value, size = 120 }: { value: number; size?: number }) {
   const radius = (size - 12) / 2;
   const circumference = radius * 2 * Math.PI;
@@ -783,8 +829,7 @@ function CircularProgress({ value, size = 120 }: { value: number; size?: number 
   );
 }
 
-// Skill Gap Bar - ENHANCED WITH PRIORITY
-function SkillGapBar({ skill }: { skill: { name: string; current: number; required: number; priority: 'high' | 'medium' | 'low'; category: string } }) {
+function SkillGapBar({ skill }: any) {
   const gap = skill.required - skill.current;
   const priorityColors = {
     high: 'bg-red-100 text-red-700 border-red-300',
@@ -807,7 +852,6 @@ function SkillGapBar({ skill }: { skill: { name: string; current: number; requir
       </div>
       
       <div className="relative h-8 bg-neutral-200 rounded-xl overflow-hidden">
-        {/* Current Level */}
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${skill.current}%` }}
@@ -817,7 +861,6 @@ function SkillGapBar({ skill }: { skill: { name: string; current: number; requir
           <span className="text-xs font-semibold text-white">{skill.current}%</span>
         </motion.div>
 
-        {/* Required Level Marker */}
         <div
           className="absolute h-full border-r-4 border-emerald-600 z-10"
           style={{ left: `${skill.required}%` }}
@@ -836,7 +879,6 @@ function SkillGapBar({ skill }: { skill: { name: string; current: number; requir
   );
 }
 
-// Helper function
 function getMatchScoreInfo(score: number) {
   if (score >= 85) {
     return {

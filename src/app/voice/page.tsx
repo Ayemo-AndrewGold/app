@@ -414,8 +414,11 @@ You're doing great! Keep going! 💪`;
                   >
                     Record Another
                   </button>
-                  <button className="px-6 py-3 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition-colors flex items-center gap-2">
-                    View Updated Roadmap
+                  <button 
+                    onClick={() => window.location.href = '/dashboard'}
+                    className="px-6 py-3 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition-colors flex items-center gap-2"
+                  >
+                    View Updated Dashboard
                     <ChevronRight className="w-5 h-5" />
                   </button>
                 </div>
