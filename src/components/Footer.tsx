@@ -22,23 +22,23 @@ const Footer = () => {
             </p>
           </div>
 
-          <div>
+          {/* <div>
             <h3 className="font-semibold text-white mb-4">Product</h3>
             <ul className="space-y-2">
               <li><Link href="#features" className="hover:text-emerald-400 transition-colors">Features</Link></li>
               <li><Link href="#how-it-works" className="hover:text-emerald-400 transition-colors">How It Works</Link></li>
               <li><Link href="/pricing" className="hover:text-emerald-400 transition-colors">Pricing</Link></li>
             </ul>
-          </div>
+          </div> */}
 
-          <div>
+          {/* <div>
             <h3 className="font-semibold text-white mb-4">Company</h3>
             <ul className="space-y-2">
               <li><Link href="/about" className="hover:text-emerald-400 transition-colors">About</Link></li>
               <li><Link href="/contact" className="hover:text-emerald-400 transition-colors">Contact</Link></li>
               <li><Link href="/privacy" className="hover:text-emerald-400 transition-colors">Privacy</Link></li>
             </ul>
-          </div>
+          </div> */}
         </div>
 
         <div className="border-t border-neutral-800 pt-8 text-center">

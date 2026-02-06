@@ -55,7 +55,7 @@ const steps = [
   {
     icon: Target,
     title: 'Get Your Recommendations',
-    description: 'Receive personalized career recommendations with detailed roadmaps, skill requirements, and salary expectations.',
+    description: 'The AI explains why a path fits with detailed roadmaps, skill requirements, and salary expectations. so students trust their decisions',
   },
   {
     icon: BookOpen,

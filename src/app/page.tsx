@@ -30,7 +30,7 @@ const LandingPage = () => {
       <HowItWorksSection />
 
       {/* Social Proof */}
-      <SocialProofSection />
+      {/* <SocialProofSection /> */}
 
       {/* CTA Section */}
       <CTASection />
