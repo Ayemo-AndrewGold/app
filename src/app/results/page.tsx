@@ -829,7 +829,15 @@ function CircularProgress({ value, size = 120 }: { value: number; size?: number 
   );
 }
 
-function SkillGapBar({ skill }: any) {
+interface Skill {
+  name: string;
+  current: number;
+  required: number;
+  category: string;
+  priority: 'high' | 'medium' | 'low';
+}
+
+function SkillGapBar({ skill }: { skill: Skill }) {
   const gap = skill.required - skill.current;
   const priorityColors = {
     high: 'bg-red-100 text-red-700 border-red-300',

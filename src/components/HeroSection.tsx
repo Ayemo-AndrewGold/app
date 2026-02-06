@@ -110,10 +110,10 @@ return (
                 delay={0.3}
               />
               <StatCard
-                icon={Users}
-                value="+"
-                label="Students Guided"
-                delay={0.4}
+                icon={Globe}
+                value="24/7"
+                label="AI Available"
+                delay={0.6}
               />
               <StatCard
                 icon={TrendingUp}
@@ -122,10 +122,10 @@ return (
                 delay={0.5}
               />
               <StatCard
-                icon={Globe}
-                value="24/7"
-                label="AI Available"
-                delay={0.6}
+                icon={Users}
+                value="..."
+                label="Students Guided"
+                delay={0.4}
               />
             </div>
 
